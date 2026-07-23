@@ -78,7 +78,7 @@ O script cria e gerencia automaticamente duas abas na Planilha Google:
 |---|---|
 | **Curso** | CST em Análise e Desenvolvimento de Sistemas - UNINTER |
 | **Disciplina** | Atividade Extensionista II - Tecnologia Aplicada à Inclusão Digital (Projeto) |
-| **ODS relacionados** | 04 - Educação de Qualidade · 09 - Indústria, Inovação e Infraestrutura |
+| **ODS relacionado** | 09 - Indústria, Inovação e Infraestrutura |
 | **Setor de aplicação** | Escola Estadual Professor João Martins de Almeida - Pindamonhangaba/SP |
 | **Autora** | Zara de Albuquerque Silva |
 
