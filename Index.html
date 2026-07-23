@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <base target="_top">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --paper: #EEF2F7;
+      --card: #FFFFFF;
+      --manila: #D7E4F2;
+      --manila-dark: #C0D6EC;
+      --ink: #1B3A5C;
+      --ink-soft: #5B6E80;
+      --brass: #2E6DA4;
+      --brass-dark: #1F4E78;
+      --teal-ok: #3A7D63;
+      --teal-ok-bg: #E4F0EA;
+      --amber-warn: #B9852E;
+      --amber-warn-bg: #FBF0DE;
+      --blue-info: #6B5CA5;
+      --blue-info-bg: #ECE8F5;
+      --rust-bad: #A34632;
+      --rust-bad-bg: #F7E7E2;
+      --line: #C7D6E5;
+    }
+    * { box-sizing: border-box; }
+    body {
+      font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
+      background: var(--paper);
+      margin: 0;
+      padding: 18px 14px 40px;
+      color: var(--ink);
+    }
+
+    /* ---------- Header ---------- */
+    .cabecalho {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+    .selo {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: var(--ink);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      position: relative;
+    }
+    .selo::after {
+      content: '';
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--paper);
+    }
+    h1 {
+      font-family: 'Space Mono', monospace;
+      color: var(--ink);
+      font-size: 19px;
+      font-weight: 700;
+      margin: 0;
+      letter-spacing: -0.02em;
+    }
+    .subtitulo {
+      color: var(--ink-soft);
+      font-size: 12.5px;
+      margin-top: 2px;
+    }
+
+    /* ---------- Folder tabs ---------- */
+    .tabs {
+      display: flex;
+      gap: 4px;
+      margin-bottom: 0;
+      padding-left: 2px;
+    }
+    .tab {
+      padding: 10px 16px 9px;
+      background: var(--manila);
+      border: none;
+      border-radius: 10px 10px 0 0;
+      cursor: pointer;
+      font-size: 12.5px;
+      font-weight: 600;
+      color: var(--brass-dark);
+      position: relative;
+      top: 1px;
+      transition: background 0.15s ease;
+    }
+    .tab.ativo {
+      background: var(--card);
+      color: var(--ink);
+    }
+    .conteudo-principal {
+      background: var(--card);
+      border-radius: 0 12px 12px 12px;
+      padding: 18px 16px;
+      box-shadow: 0 1px 2px rgba(38,51,59,0.06);
+    }
+    .painel { display: none; }
+    .painel.ativo { display: block; }
+
+    /* ---------- Formulário ---------- */
+    .campo { margin-bottom: 14px; }
+    .campo label {
+      display: block;
+      font-size: 11.5px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+      margin-bottom: 5px;
+      color: var(--ink-soft);
+    }
+    .campo input, .campo select {
+      width: 100%;
+      padding: 10px 11px;
+      border: 1.5px solid var(--line);
+      border-radius: 8px;
+      font-size: 14px;
+      font-family: inherit;
+      background: var(--card);
+      color: var(--ink);
+    }
+    .campo input:focus, .campo select:focus {
+      outline: none;
+      border-color: var(--brass);
+    }
+    .linha-dupla {
+      display: flex;
+      gap: 10px;
+    }
+    .linha-dupla .campo { flex: 1; }
+    .ajuda {
+      font-size: 11.5px;
+      color: var(--ink-soft);
+      margin-top: 4px;
+    }
+    button.primario {
+      background: var(--ink);
+      color: var(--paper);
+      border: none;
+      padding: 12px 18px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 600;
+      width: 100%;
+      font-family: 'Space Mono', monospace;
+      letter-spacing: 0.02em;
+    }
+    button.primario:active { transform: translateY(1px); }
+    .mensagem {
+      font-size: 13px;
+      margin-top: 12px;
+      padding: 10px 12px;
+      border-radius: 8px;
+      display: none;
+      line-height: 1.4;
+    }
+    .mensagem.sucesso { display: block; background: var(--teal-ok-bg); color: var(--teal-ok); }
+    .mensagem.erro { display: block; background: var(--rust-bad-bg); color: var(--rust-bad); }
+
+    /* ---------- Filtros ---------- */
+    .filtros {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 14px;
+      flex-wrap: wrap;
+    }
+    .filtros select, .filtros input {
+      padding: 8px 10px;
+      border: 1.5px solid var(--line);
+      border-radius: 8px;
+      font-size: 12.5px;
+      font-family: inherit;
+      background: var(--card);
+    }
+    .filtros input { flex: 1; min-width: 140px; }
+
+    /* ---------- Cards de equipamento (estilo etiqueta) ---------- */
+    .item-equipamento {
+      background: var(--card);
+      border: 1.5px solid var(--line);
+      border-left: 4px solid var(--ink);
+      border-radius: 10px;
+      padding: 13px 14px 13px 16px;
+      margin-bottom: 9px;
+      position: relative;
+    }
+    .item-equipamento::before {
+      content: '';
+      position: absolute;
+      top: 14px;
+      left: -7px;
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: var(--paper);
+      border: 1.5px solid var(--line);
+    }
+    .item-equipamento.st-funcionando { border-left-color: var(--teal-ok); }
+    .item-equipamento.st-manutencao { border-left-color: var(--amber-warn); }
+    .item-equipamento.st-garantia { border-left-color: var(--blue-info); }
+    .item-equipamento.st-descarte { border-left-color: var(--rust-bad); }
+
+    .item-topo {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 8px;
+    }
+    .item-titulo { font-weight: 700; font-size: 14px; }
+    .item-tag {
+      font-family: 'Space Mono', monospace;
+      font-size: 10.5px;
+      color: var(--brass-dark);
+      background: var(--manila);
+      padding: 2px 7px;
+      border-radius: 5px;
+      white-space: nowrap;
+    }
+    .item-detalhe { font-size: 12.5px; color: var(--ink-soft); margin-top: 5px; }
+    .badge {
+      display: inline-block;
+      padding: 3px 9px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 600;
+      margin-top: 7px;
+    }
+    .badge-funcionando { background: var(--teal-ok-bg); color: var(--teal-ok); }
+    .badge-manutencao { background: var(--amber-warn-bg); color: var(--amber-warn); }
+    .badge-garantia { background: var(--blue-info-bg); color: var(--blue-info); }
+    .badge-descarte { background: var(--rust-bad-bg); color: var(--rust-bad); }
+
+    .item-acoes {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+      margin-top: 10px;
+      flex-wrap: wrap;
+    }
+    .item-acoes select {
+      padding: 6px 8px;
+      border-radius: 6px;
+      border: 1.5px solid var(--line);
+      font-size: 12px;
+      font-family: inherit;
+      flex: 1;
+    }
+    .btn-remover {
+      background: var(--rust-bad-bg);
+      color: var(--rust-bad);
+      border: none;
+      padding: 6px 11px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    /* ---------- Totais ---------- */
+    .resumo-geral {
+      background: var(--ink);
+      color: var(--paper);
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 16px;
+      text-align: center;
+    }
+    .resumo-geral .numero {
+      font-family: 'Space Mono', monospace;
+      font-size: 34px;
+      font-weight: 700;
+    }
+    .resumo-geral .label { font-size: 12.5px; opacity: 0.75; margin-top: 2px; }
+
+    .card-tipo {
+      background: var(--card);
+      border: 1.5px solid var(--line);
+      border-radius: 10px;
+      padding: 14px 15px;
+      margin-bottom: 9px;
+    }
+    .titulo-tipo {
+      display: flex;
+      justify-content: space-between;
+      font-weight: 700;
+      font-size: 13.5px;
+      margin-bottom: 9px;
+    }
+    .titulo-tipo .contagem {
+      font-family: 'Space Mono', monospace;
+      color: var(--brass-dark);
+    }
+    .barra-status {
+      display: flex;
+      height: 7px;
+      border-radius: 4px;
+      overflow: hidden;
+      margin-bottom: 8px;
+      background: var(--paper);
+    }
+    .segmento-funcionando { background: var(--teal-ok); }
+    .segmento-manutencao { background: var(--amber-warn); }
+    .segmento-garantia { background: var(--blue-info); }
+    .segmento-descarte { background: var(--rust-bad); }
+    .legenda-status {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      font-size: 11px;
+      color: var(--ink-soft);
+    }
+    .legenda-item { display: flex; align-items: center; gap: 4px; }
+    .dot { width: 7px; height: 7px; border-radius: 50%; display: inline-block; }
+    .detalhe-marca {
+      font-size: 12px;
+      color: var(--ink-soft);
+      margin-top: 9px;
+      padding-top: 9px;
+      border-top: 1px dashed var(--line);
+      font-family: 'Space Mono', monospace;
+      font-size: 11px;
+    }
+
+    .carregando { text-align: center; padding: 30px; color: var(--ink-soft); font-size: 13px; }
+  </style>
+</head>
+<body>
+
+  <div class="cabecalho">
+    <div class="selo"></div>
+    <div>
+      <h1>INVENTÁRIO · TI</h1>
+      <div class="subtitulo">Escola Estadual Prof. João Martins de Almeida</div>
+    </div>
+  </div>
+
+  <div class="tabs">
+    <div class="tab ativo" data-painel="cadastrar" onclick="mudarPainel('cadastrar')">Cadastrar</div>
+    <div class="tab" data-painel="inventario" onclick="mudarPainel('inventario')">Inventário</div>
+    <div class="tab" data-painel="totais" onclick="mudarPainel('totais')">Totais</div>
+  </div>
+
+  <div class="conteudo-principal">
+
+    <!-- PAINEL: CADASTRAR -->
+    <div class="painel ativo" id="painel-cadastrar">
+      <div class="campo">
+        <label>Equipamento</label>
+        <select id="input-equipamento" onchange="atualizarCampoMarca()"></select>
+      </div>
+
+      <div class="campo" id="campo-marca-select">
+        <label>Marca/Modelo</label>
+        <select id="input-marca-select"></select>
+      </div>
+      <div class="campo" id="campo-marca-texto" style="display:none;">
+        <label>Marca/Modelo</label>
+        <input type="text" id="input-marca-texto" placeholder="Ex: Epson, HP, TP-Link...">
+      </div>
+
+      <div class="linha-dupla">
+        <div class="campo">
+          <label>Etiqueta (de)</label>
+          <input type="text" id="input-etiqueta-de" placeholder="Ex: 1">
+        </div>
+        <div class="campo">
+          <label>Etiqueta (até)</label>
+          <input type="text" id="input-etiqueta-ate" placeholder="Ex: 35 (opcional)">
+        </div>
+      </div>
+      <div class="ajuda" style="margin-top:-8px; margin-bottom:14px;">
+        Deixe "até" em branco para cadastrar só um. Preencha para cadastrar vários de uma vez (ex: de 1 até 35 = 35 notebooks dessa marca).
+      </div>
+
+      <div class="campo">
+        <label>Número de Série (se houver)</label>
+        <input type="text" id="input-numeroSerie" placeholder="Opcional - só se for cadastrar 1 equipamento">
+      </div>
+      <div class="campo">
+        <label>Local/Sala</label>
+        <input type="text" id="input-local" placeholder="Ex: Laboratório de Informática 1">
+      </div>
+      <div class="campo">
+        <label>Status</label>
+        <select id="input-status"></select>
+      </div>
+      <button class="primario" onclick="cadastrar()">CADASTRAR</button>
+      <div class="mensagem" id="cadastro-mensagem"></div>
+    </div>
+
+    <!-- PAINEL: INVENTÁRIO -->
+    <div class="painel" id="painel-inventario">
+      <div class="filtros">
+        <input type="text" id="filtro-busca" placeholder="Buscar por etiqueta, marca, local..." oninput="renderizarInventario()">
+        <select id="filtro-tipo" onchange="renderizarInventario()"><option value="">Todos os tipos</option></select>
+        <select id="filtro-status" onchange="renderizarInventario()"><option value="">Todos os status</option></select>
+      </div>
+      <div id="lista-inventario"><div class="carregando">Carregando...</div></div>
+    </div>
+
+    <!-- PAINEL: TOTAIS -->
+    <div class="painel" id="painel-totais">
+      <div id="totais-conteudo"><div class="carregando">Carregando...</div></div>
+    </div>
+
+  </div>
+
+  <script>
+    let listasConfig = { tipos: [], status: [], marcasNotebook: [] };
+    let inventarioCompleto = [];
+
+    const CLASSES_BADGE = {
+      'Funcionando': 'badge-funcionando',
+      'Em manutenção': 'badge-manutencao',
+      'Aguardando peça/garantia': 'badge-garantia',
+      'Para descarte': 'badge-descarte'
+    };
+    const CLASSES_SEGMENTO = {
+      'Funcionando': 'segmento-funcionando',
+      'Em manutenção': 'segmento-manutencao',
+      'Aguardando peça/garantia': 'segmento-garantia',
+      'Para descarte': 'segmento-descarte'
+    };
+    const CLASSES_ITEM = {
+      'Funcionando': 'st-funcionando',
+      'Em manutenção': 'st-manutencao',
+      'Aguardando peça/garantia': 'st-garantia',
+      'Para descarte': 'st-descarte'
+    };
+
+    function mudarPainel(nome) {
+      document.querySelectorAll('.tab').forEach(t => t.classList.toggle('ativo', t.dataset.painel === nome));
+      document.querySelectorAll('.painel').forEach(p => p.classList.remove('ativo'));
+      document.getElementById('painel-' + nome).classList.add('ativo');
+
+      if (nome === 'inventario') carregarInventario();
+      if (nome === 'totais') carregarTotais();
+    }
+
+    function preencherSelects() {
+      const selEquip = document.getElementById('input-equipamento');
+      const selStatus = document.getElementById('input-status');
+      const selMarca = document.getElementById('input-marca-select');
+      const filtroTipo = document.getElementById('filtro-tipo');
+      const filtroStatus = document.getElementById('filtro-status');
+
+      selEquip.innerHTML = listasConfig.tipos.map(t => `<option value="${t}">${t}</option>`).join('');
+      selStatus.innerHTML = listasConfig.status.map(s => `<option value="${s}">${s}</option>`).join('');
+      selMarca.innerHTML = listasConfig.marcasNotebook.map(m => `<option value="${m}">${m}</option>`).join('');
+      filtroTipo.innerHTML = '<option value="">Todos os tipos</option>' +
+        listasConfig.tipos.map(t => `<option value="${t}">${t}</option>`).join('');
+      filtroStatus.innerHTML = '<option value="">Todos os status</option>' +
+        listasConfig.status.map(s => `<option value="${s}">${s}</option>`).join('');
+
+      atualizarCampoMarca();
+    }
+
+    function atualizarCampoMarca() {
+      const tipo = document.getElementById('input-equipamento').value;
+      const ehNotebook = tipo === 'Notebook';
+      document.getElementById('campo-marca-select').style.display = ehNotebook ? 'block' : 'none';
+      document.getElementById('campo-marca-texto').style.display = ehNotebook ? 'none' : 'block';
+    }
+
+    function carregarConfig() {
+      google.script.run
+        .withSuccessHandler(dados => {
+          listasConfig = dados;
+          preencherSelects();
+        })
+        .getDadosIniciais();
+    }
+
+    function cadastrar() {
+      const tipo = document.getElementById('input-equipamento').value;
+      const ehNotebook = tipo === 'Notebook';
+      const marca = ehNotebook
+        ? document.getElementById('input-marca-select').value
+        : document.getElementById('input-marca-texto').value.trim();
+
+      const payload = {
+        equipamento: tipo,
+        marca: marca,
+        etiquetaDe: document.getElementById('input-etiqueta-de').value.trim(),
+        etiquetaAte: document.getElementById('input-etiqueta-ate').value.trim(),
+        numeroSerie: document.getElementById('input-numeroSerie').value.trim(),
+        local: document.getElementById('input-local').value.trim(),
+        status: document.getElementById('input-status').value
+      };
+
+      google.script.run
+        .withSuccessHandler(resposta => {
+          const msgEl = document.getElementById('cadastro-mensagem');
+          if (resposta.sucesso) {
+            msgEl.className = 'mensagem sucesso';
+            msgEl.textContent = resposta.mensagem;
+            document.getElementById('input-etiqueta-de').value = '';
+            document.getElementById('input-etiqueta-ate').value = '';
+            document.getElementById('input-numeroSerie').value = '';
+            document.getElementById('input-local').value = '';
+            document.getElementById('input-marca-texto').value = '';
+          } else {
+            msgEl.className = 'mensagem erro';
+            msgEl.textContent = resposta.mensagem;
+          }
+        })
+        .withFailureHandler(erro => {
+          const msgEl = document.getElementById('cadastro-mensagem');
+          msgEl.className = 'mensagem erro';
+          msgEl.textContent = 'Erro: ' + erro.message;
+        })
+        .cadastrarEquipamento(payload);
+    }
+
+    function carregarInventario() {
+      document.getElementById('lista-inventario').innerHTML = '<div class="carregando">Carregando...</div>';
+      google.script.run
+        .withSuccessHandler(itens => {
+          inventarioCompleto = itens;
+          renderizarInventario();
+        })
+        .getInventario();
+    }
+
+    function renderizarInventario() {
+      const busca = document.getElementById('filtro-busca').value.toLowerCase();
+      const tipoFiltro = document.getElementById('filtro-tipo').value;
+      const statusFiltro = document.getElementById('filtro-status').value;
+
+      const filtrados = inventarioCompleto.filter(item => {
+        const combinaBusca = !busca ||
+          String(item.etiqueta).toLowerCase().includes(busca) ||
+          String(item.local).toLowerCase().includes(busca) ||
+          String(item.marca).toLowerCase().includes(busca) ||
+          String(item.numeroSerie).toLowerCase().includes(busca);
+        const combinaTipo = !tipoFiltro || item.equipamento === tipoFiltro;
+        const combinaStatus = !statusFiltro || item.status === statusFiltro;
+        return combinaBusca && combinaTipo && combinaStatus;
+      });
+
+      if (filtrados.length === 0) {
+        document.getElementById('lista-inventario').innerHTML =
+          '<div class="carregando">Nenhum equipamento encontrado.</div>';
+        return;
+      }
+
+      const html = filtrados.map(item => {
+        const badgeClasse = CLASSES_BADGE[item.status] || '';
+        const itemClasse = CLASSES_ITEM[item.status] || '';
+        const opcoesStatus = listasConfig.status.map(s =>
+          `<option value="${s}" ${s === item.status ? 'selected' : ''}>${s}</option>`
+        ).join('');
+
+        return `
+          <div class="item-equipamento ${itemClasse}">
+            <div class="item-topo">
+              <div class="item-titulo">${item.equipamento} - ${item.marca}</div>
+              ${item.etiqueta ? `<div class="item-tag">Nº ${item.etiqueta}</div>` : ''}
+            </div>
+            <div class="item-detalhe">📍 ${item.local}${item.numeroSerie ? ' · Nº série: ' + item.numeroSerie : ''}</div>
+            <div class="item-detalhe">Cadastrado em ${item.dataCadastro}</div>
+            <span class="badge ${badgeClasse}">${item.status}</span>
+            <div class="item-acoes">
+              <select onchange="mudarStatus(${item.linha}, this.value)">${opcoesStatus}</select>
+              <button class="btn-remover" onclick="remover(${item.linha})">Remover</button>
+            </div>
+          </div>`;
+      }).join('');
+
+      document.getElementById('lista-inventario').innerHTML = html;
+    }
+
+    function mudarStatus(linha, novoStatus) {
+      google.script.run
+        .withSuccessHandler(() => carregarInventario())
+        .atualizarStatus(linha, novoStatus);
+    }
+
+    function remover(linha) {
+      if (!confirm('Remover este equipamento do inventário?')) return;
+      google.script.run
+        .withSuccessHandler(() => carregarInventario())
+        .removerEquipamento(linha);
+    }
+
+    function carregarTotais() {
+      document.getElementById('totais-conteudo').innerHTML = '<div class="carregando">Carregando...</div>';
+      google.script.run
+        .withSuccessHandler(renderizarTotais)
+        .getTotais();
+    }
+
+    function renderizarTotais(dados) {
+      const tipos = Object.keys(dados.porTipo).sort((a, b) => dados.porTipo[b] - dados.porTipo[a]);
+
+      let html = `
+        <div class="resumo-geral">
+          <div class="numero">${dados.totalGeral}</div>
+          <div class="label">equipamentos cadastrados no total</div>
+        </div>`;
+
+      if (tipos.length === 0) {
+        html += '<div class="carregando">Nenhum equipamento cadastrado ainda.</div>';
+      } else {
+        tipos.forEach(tipo => {
+          const totalTipo = dados.porTipo[tipo];
+          const statusDoTipo = dados.porTipoEStatus[tipo] || {};
+          const marcasDoTipo = dados.porTipoEMarca[tipo] || {};
+
+          let barras = '';
+          let legenda = '';
+          Object.keys(statusDoTipo).forEach(status => {
+            const qtd = statusDoTipo[status];
+            const pct = (qtd / totalTipo * 100).toFixed(0);
+            const classe = CLASSES_SEGMENTO[status] || '';
+            barras += `<div class="${classe}" style="width:${pct}%"></div>`;
+            legenda += `<span class="legenda-item"><span class="dot ${classe}"></span>${status}: ${qtd}</span>`;
+          });
+
+          const marcasTexto = Object.keys(marcasDoTipo)
+            .sort((a, b) => marcasDoTipo[b] - marcasDoTipo[a])
+            .map(m => `${m}: ${marcasDoTipo[m]}`)
+            .join('  ·  ');
+
+          html += `
+            <div class="card-tipo">
+              <div class="titulo-tipo"><span>${tipo}</span><span class="contagem">${totalTipo}</span></div>
+              <div class="barra-status">${barras}</div>
+              <div class="legenda-status">${legenda}</div>
+              <div class="detalhe-marca">${marcasTexto}</div>
+            </div>`;
+        });
+      }
+
+      document.getElementById('totais-conteudo').innerHTML = html;
+    }
+
+    carregarConfig();
+  </script>
+</body>
+</html>
