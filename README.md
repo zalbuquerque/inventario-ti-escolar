@@ -1,10 +1,12 @@
 # 🖥️ Inventário Digital Escolar para Equipamentos de TI
 
+[Acesse a página TESTE](https://script.google.com/macros/s/AKfycbw6Y28yefW9kkJ3hbl1WMd9FK1lFel2ybgpEscI25RKC-fguxQ6kj7nXRrRPF3v0mkn/exec)
+
 Sistema web gratuito para cadastro, consulta e controle de equipamentos de TI (notebooks, computadores, projetores, impressoras, etc.) de uma escola, construído com **Google Apps Script + Google Sheets**.
 
 Desenvolvido para a **Atividade Extensionista II - Tecnologia Aplicada à Inclusão Digital** do curso de **Análise e Desenvolvimento de Sistemas (UNINTER)**, aplicado na **Escola Estadual Professor João Martins de Almeida**, em Pindamonhangaba/SP.
 
-> 📌 Este repositório contém apenas o **código-fonte** do sistema (`Code.gs` + `Index.html`). Os dados ficam armazenados em uma Planilha Google própria de cada instalação - nenhum dado da escola é versionado aqui, pois já estão utilizando.
+> 📌 Este repositório contém apenas o **código-fonte** do sistema (`Code.gs` + `Index.html`) e a página TESTE. Os dados ficam armazenados em uma Planilha Google própria de cada instalação - nenhum dado da escola é versionado aqui.
 
 ---
 
